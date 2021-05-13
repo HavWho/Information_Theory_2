@@ -1,9 +1,7 @@
 package com.company;
 
-import org.w3c.dom.ls.LSOutput;
-
+import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -13,15 +11,22 @@ public class Main {
     //Тогда n=mk⋅2k+mk−1⋅2k−1+...+m1⋅2+m0, где mk=1,mi∈{0,1} и xn=x^((...((mk⋅2+mk−1)⋅2+mk−2)⋅2+...)⋅2+m1)⋅2+m0
     public static int fastPower(int val1, int val2, int n) {
 
-        if (val2 == 1)
-            return 1;
+        BigInteger bigVal1 = BigInteger.valueOf(val1);
+        BigInteger bigVal2 = BigInteger.valueOf(val2);
+        BigInteger toReturn = BigInteger.ONE;
 
-        int tmp = fastPower(val1, val2 / 2, n);
+        while (!bigVal2.equals(BigInteger.ZERO)){
+            while (bigVal2.mod(BigInteger.valueOf(2)).equals(BigInteger.ZERO)){
+                bigVal2 = bigVal2.divide(BigInteger.TWO);
+                bigVal1 = bigVal1.multiply(bigVal1).mod(BigInteger.valueOf(n));
+            }
+            bigVal2 = bigVal2.add(BigInteger.valueOf(-1));
+            toReturn = toReturn.multiply(bigVal1).mod(BigInteger.valueOf(n));
+        }
 
-        if (val2 % 2 == 0)
-            return (tmp * tmp) % n;
-        else
-            return (val1 * tmp * tmp) % n;
+        String resultStr = toReturn.toString();
+
+        return Integer.parseInt(resultStr);
     }
 
     //расширенный алгоритм Евклида для вычисления НОД
@@ -32,7 +37,7 @@ public class Main {
         int s1 = 1, s2 = 0;
         int t1 = 0, t2 = 1;
         int[] toReturn = new int[3];
-        int quotient = 0;
+        int quotient;
 
         while (bTemp != 0){
             quotient = aTemp / bTemp;
@@ -59,19 +64,8 @@ public class Main {
         return (p - 1) * (q - 1);
     }
 
-    public static int GCD (int val1, int val2){
-        while (val2 != 0){
-            int temp = val1 % val2;
-            val1 = val2;
-            val2 = temp;
-        }
-        return val1;
-    }
-
     public static int[] generateOpenKey(int p, int q, int e) {
-        Random random = new Random();
         int n = p * q;
-        int nEyler = fi(p, q);
 
         int[] toReturn = new int[2];
         toReturn[0] = e;
